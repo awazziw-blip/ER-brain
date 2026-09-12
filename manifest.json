@@ -1,0 +1,16 @@
+{
+  "name": "MY ER EXTERNAL BRAIN",
+  "short_name": "ER BRAIN",
+  "description": "ER Clinical Decision Support System",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#03dac6",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
