@@ -3,562 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MY ER EXTERNAL BRAIN</title>
-    <!-- PWA Meta Tags -->
+    <title>MY ER EXTERNAL BRAIN - Clinical Decision Support</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#03dac6">
-    <link rel="apple-touch-icon" href="icon.png">
-    
+    <meta name="theme-color" content="#0f172a">
     <style>
-        :root {
-            --bg: #121212;
-            --surface: #1e1e1e;
-            --surface-hover: #2a2a2a;
-            --text-main: #f0f0f0;
-            --text-sub: #a0a0a0;
-            --accent: #03dac6;
-            --warning: #ffb74d;
-            --danger: #cf6679;
-            --border: #333333;
-        }
-        * { box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            margin: 0;
-            padding: 16px;
-            max-width: 650px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
-        }
-        .header-left h1 { font-size: 1.2rem; margin: 0; color: var(--accent); }
-        .badge {
-            font-size: 0.75rem;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            background: var(--accent);
-            color: #000;
-        }
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-        .nav-btn {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px;
-            text-align: left;
-            cursor: pointer;
-            color: var(--text-main);
-            transition: 0.2s;
-        }
-        .nav-btn:hover { background: var(--surface-hover); }
-        .nav-btn.active { border-color: var(--accent); background: #242424; }
-        .nav-btn h3 { margin: 0 0 4px 0; font-size: 0.9rem; color: #fff; }
-        .nav-btn span { font-size: 0.75rem; color: var(--text-sub); }
-        .content-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 16px;
-            min-height: 450px;
-        }
-        .btn {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 10px 14px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            width: 100%;
-            margin-top: 6px;
-        }
-        .btn-sub {
-            background: #333;
-            color: #fff;
-            border: 1px solid var(--border);
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-srs-again { background: var(--danger); color: #000; font-weight: bold; flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; }
-        .btn-srs-good { background: var(--warning); color: #000; font-weight: bold; flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; }
-        .btn-srs-easy { background: var(--accent); color: #000; font-weight: bold; flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; }
-        
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            background: #242424;
-            border: 1px solid var(--border);
-            color: #fff;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-        .item-card {
-            background: #252525;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-        .standard-box {
-            border-left: 3px solid var(--accent);
-            padding-left: 10px;
-            margin: 8px 0;
-            background: rgba(3, 218, 198, 0.05);
-            font-size: 0.85rem;
-        }
-        .usual-box {
-            border-left: 3px solid var(--warning);
-            padding-left: 10px;
-            margin: 8px 0;
-            background: rgba(255, 183, 77, 0.05);
-            font-size: 0.85rem;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-    <header>
-        <div class="header-left">
-            <h1>MY ER EXTERNAL BRAIN</h1>
-            <span class="badge">v3.1 SRS + Search</span>
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <span class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">ER BRAIN</span>
+            <h1 class="text-base font-semibold tracking-wide">Clinical Decision Support</h1>
         </div>
-        <button class="btn-sub" onclick="renderSettings()" style="width: auto; background: var(--surface);">⚙️ ตั้งค่า</button>
+        <div class="flex items-center space-x-2 text-xs text-slate-400">
+            <span id="sync-status" class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Offline Ready (v3.1)</span>
+        </div>
     </header>
 
-    <div class="nav-grid">
-        <button class="nav-btn" onclick="renderReview()" id="btn-review">
-            <h3>🧠 Daily Review (SRS)</h3>
-            <span>Smart Spaced Repetition</span>
-        </button>
-        <button class="nav-btn" onclick="renderDrugs()" id="btn-drugs">
-            <h3>💊 Drugs</h3>
-            <span>Standard vs Usual</span>
-        </button>
-        <button class="nav-btn" onclick="renderEKG()" id="btn-ekg">
-            <h3>❤️ EKG Module</h3>
-            <span>5-Step & Error Bank</span>
-        </button>
-        <button class="nav-btn" onclick="renderProcedures()" id="btn-procedures">
-            <h3>🔧 Procedures</h3>
-            <span>Walkthrough Cards</span>
-        </button>
-    </div>
+    <!-- Main Navigation / Module Selector -->
+    <nav class="bg-slate-900/60 border-b border-slate-800/80 px-4 py-2 flex space-x-2 overflow-x-auto">
+        <button onclick="switchModule('cpr')" id="nav-cpr" class="module-nav px-3 py-1.5 rounded text-sm font-medium bg-blue-600 text-white shrink-0">🚨 CPR & ACLS</button>
+        <button onclick="switchModule('daily-review')" id="nav-daily-review" class="module-nav px-3 py-1.5 rounded text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 shrink-0">Daily Review (SRS)</button>
+        <button onclick="switchModule('emergency-drugs')" id="nav-emergency-drugs" class="module-nav px-3 py-1.5 rounded text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 shrink-0">Emergency Drugs</button>
+        <button onclick="switchModule('ekg-module')" id="nav-ekg-module" class="module-nav px-3 py-1.5 rounded text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 shrink-0">EKG Analysis</button>
+        <button onclick="switchModule('procedures')" id="nav-procedures" class="module-nav px-3 py-1.5 rounded text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 shrink-0">Procedures</button>
+        <button onclick="switchModule('settings')" id="nav-settings" class="module-nav px-3 py-1.5 rounded text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 shrink-0">Settings / Backup</button>
+    </nav>
 
-    <div id="app-root" class="content-box"></div>
+    <!-- Content Container -->
+    <main class="flex-1 p-4 max-w-4xl w-full mx-auto">
 
+        <!-- MODULE 0: CPR & ACLS PROTOCOL -->
+        <section id="module-cpr" class="space-y-4">
+            <div class="flex justify-between items-center bg-slate-900 p-4 rounded-xl border border-slate-800">
+                <div>
+                    <h2 class="text-lg font-bold text-rose-400">CPR & Cardiac Arrest Management</h2>
+                    <p class="text-xs text-slate-400">แนวทางปฏิบัติช่วยชีวิตขั้นสูง (ACLS) และจับเวลาฉุกเฉินหน้างาน</p>
+                </div>
+                <div class="text-right bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
+                    <span class="text-[10px] text-slate-400 block">Code Timer</span>
+                    <span id="cpr-timer" class="text-lg font-mono font-bold text-amber-400">00:00</span>
+                    <div class="flex space-x-1 mt-1">
+                        <button onclick="startCPRTimer()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-0.5 rounded">Start</button>
+                        <button onclick="resetCPRTimer()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-[10px] px-2 py-0.5 rounded">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Algorithm Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Shockable Rhythm -->
+                <div class="bg-slate-900 border border-rose-500/30 rounded-xl p-4 space-y-3">
+                    <h3 class="text-sm font-bold text-rose-400 border-b border-slate-800 pb-2">⚡ Shockable (VF / Pulseless VT)</h3>
+                    <ul class="text-xs space-y-2 text-slate-300">
+                        <li>• <b>Defibrillation:</b> Biphasic ตามเครื่อง (200J) หรือ Monophasic 360J</li>
+                        <li>• <b>Immediate CPR:</b> ทำ CPR ต่อทันทีหลัง Shock นาน 2 นาที (5 Cycles)</li>
+                        <li>• <b>Epinephrine:</b> ให้ทุก 3-5 นาที (หลัง Shock ครั้งที่ 2 เป็นต้นไป) ขนาด 1 mg IV/IO</li>
+                        <li>• <b>Antiarrhythmic:</b> Amiodarone 300 mg IV push (ซ้ำ 150 mg ถ้ายัง Refractory VF/VT) หรือ Lidocaine 1-1.5 mg/kg</li>
+                    </ul>
+                </div>
+
+                <!-- Non-Shockable Rhythm -->
+                <div class="bg-slate-900 border border-blue-500/30 rounded-xl p-4 space-y-3">
+                    <h3 class="text-sm font-bold text-blue-400 border-b border-slate-800 pb-2">🛑 Non-Shockable (PEA / Asystole)</h3>
+                    <ul class="text-xs space-y-2 text-slate-300">
+                        <li>• <b>High-Quality CPR:</b> สลับคนนวดทุก 2 นาที, อัตรา 100-120 ครั้ง/นาที, ลึก >= 2 นิ้ว</li>
+                        <li>• <b>Epinephrine:</b> ให้เร็วที่สุดเท่าที่จะทำได้ 1 mg IV/IO ทุก 3-5 นาที</li>
+                        <li>• <b>Advanced Airway:</b> พิจารณาใส่ ETT หรือ Supraglottic airway พร้อม Capnography (ETCO2)</li>
+                        <li>• <b>H's & T's Search:</b>ประเมินหาสเหตุ reversibles ทันที</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- H's and T's Checklist -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2">
+                <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider">Reversible Causes (H's & T's)</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-slate-300 pt-1">
+                    <div class="bg-slate-950 p-2.5 rounded border border-slate-800">Hypovolemia</div>
+                    <div class="bg-slate-950 p-2.5 rounded border border-slate-800">Hypoxia</div>
+                    <div class="bg-slate-950 p-2.5 rounded border border-slate-800">Hydrogen ion (Acidosis)</div>
+                    <div class="bg-slate-950 p-2.5 rounded border border-slate-800">Hypo/Hyperkalemia</div>
+                    <div class="bg-slate-950 p-2.5 rounded border border-slate-800">Hypothermia</div>
+                    <div class="bg-slate-950 p-2.5 rounded border border-slate-800">Tension Pneumothorax</div>
+                    <div class="bg-slate-950 p-2.5 rounded border border-slate-800">Tamponade (Cardiac)</div>
+                    <div class="bg-slate-950 p-2.5 rounded border border-slate-800">Toxins / Thrombosis</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 1: DAILY REVIEW (SRS) -->
+        <section id="module-daily-review" class="hidden space-y-4">
+            <div class="flex justify-between items-center bg-slate-900 p-4 rounded-xl border border-slate-800">
+                <div>
+                    <h2 class="text-lg font-bold text-blue-400">Spaced Repetition Review (SRS)</h2>
+                    <p class="text-xs text-slate-400">ทบทวนเคสและหัวข้อฉุกเฉิน คำนวณรอบเวลาอัตโนมัติด้วยระบบ SuperMemo-lite</p>
+                </div>
+                <div class="text-right">
+                    <span id="due-count-badge" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-1 rounded-full font-semibold">ครบกำหนดทบทวน: 0 ข้อ</span>
+                </div>
+            </div>
+
+            <!-- Review Card View -->
+            <div id="srs-card-container" class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4 shadow-lg">
+                <div class="flex justify-between text-xs text-slate-400 border-b border-slate-800 pb-2">
+                    <span id="srs-card-category" class="text-blue-400 font-medium">หมวดหมู่</span>
+                    <span id="srs-card-stats">Interval: 1d | Reps: 0</span>
+                </div>
+                <div class="min-h-[120px] flex flex-col justify-center">
+                    <h3 id="srs-question" class="text-base font-medium text-slate-200">กำลังโหลดคำถาม...</h3>
+                </div>
+                <div id="srs-answer-section" class="hidden border-t border-slate-800 pt-4 space-y-4">
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800/80">
+                        <span class="text-xs text-emerald-400 font-semibold block mb-1">เฉลย / แนวทางปฏิบัติ (My Usual Practice):</span>
+                        <p id="srs-answer" class="text-sm text-slate-300 leading-relaxed whitespace-pre-line"></p>
+                    </div>
+                    <!-- SRS Rating Buttons -->
+                    <div class="grid grid-cols-3 gap-2 pt-2">
+                        <button onclick="rateSRS('again')" class="bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 py-2.5 rounded-lg text-xs font-semibold transition">
+                            🔄 Again (&lt; 1 วัน)
+                        </button>
+                        <button onclick="rateSRS('good')" class="bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 py-2.5 rounded-lg text-xs font-semibold transition">
+                            👍 Good (ตามรอบ)
+                        </button>
+                        <button onclick="rateSRS('easy')" class="bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 py-2.5 rounded-lg text-xs font-semibold transition">
+                            ⚡ Easy (ขยายรอบ)
+                        </button>
+                    </div>
+                </div>
+                <div id="srs-action-reveal">
+                    <button onclick="revealSRSAnswer()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg text-sm transition">
+                        แสดงเฉลย
+                    </button>
+                </div>
+            </div>
+
+            <!-- Empty Queue State -->
+            <div id="srs-empty-state" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-8 text-center space-y-3">
+                <div class="text-3xl">✨</div>
+                <h3 class="text-base font-semibold text-slate-200">ทบทวนครบตามกำหนดรอบเวลาเรียบร้อยแล้ว!</h3>
+                <p class="text-xs text-slate-400">ยอดเยี่ยมครับ คุณเคลียร์คิวทบทวนทั้งหมดสำหรับวันนี้แล้ว สามารถเพิ่มการ์ดใหม่หรือทบทวนล่วงหน้าได้ในเมนูจัดการข้อมูล</p>
+            </div>
+        </section>
+
+        <!-- MODULE 2: EMERGENCY DRUGS (Placeholder) -->
+        <section id="module-emergency-drugs" class="hidden space-y-4">
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                <h2 class="text-lg font-bold text-blue-400">Emergency Drugs</h2>
+                <p class="text-xs text-slate-400">เปรียบเทียบ Standard Practice กับ My Usual Practice หน้างาน</p>
+            </div>
+        </section>
+
+        <!-- MODULE 3: EKG MODULE (Placeholder) -->
+        <section id="module-ekg-module" class="hidden space-y-4">
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                <h2 class="text-lg font-bold text-blue-400">EKG 5-Step Analysis</h2>
+                <p class="text-xs text-slate-400">วิเคราะห์คลื่นไฟฟ้าหัวใจด่วน พร้อม Error Bank</p>
+            </div>
+        </section>
+
+        <!-- MODULE 4: PROCEDURES (Placeholder) -->
+        <section id="module-procedures" class="hidden space-y-4">
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                <h2 class="text-lg font-bold text-blue-400">Procedures Walkthrough Cards</h2>
+                <p class="text-xs text-slate-400">ขั้นตอนหัตถการฉุกเฉินทีละขั้นตอน</p>
+            </div>
+        </section>
+
+        <!-- MODULE 5: SETTINGS / BACKUP -->
+        <section id="module-settings" class="hidden space-y-4">
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-4">
+                <h2 class="text-lg font-bold text-blue-400">System Settings & Data Backup</h2>
+                <p class="text-xs text-slate-400">จัดการสำรองข้อมูล นำเข้า JSON หรือรีเซ็ตระบบ</p>
+                <div class="flex flex-wrap gap-2 pt-2">
+                    <button onclick="exportDataJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-xs font-semibold border border-slate-700">
+                        📥 Export JSON (Backup)
+                    </button>
+                    <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-xs font-semibold border border-slate-700 cursor-pointer">
+                        📤 Import JSON
+                        <input type="file" id="import-file-input" accept=".json" onchange="importDataJSON(event)" class="hidden">
+                    </label>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JavaScript Application Logic -->
     <script>
-        const initialDB = {
-            drugs: [
-                {
-                    id: "d1",
-                    generic: "Norepinephrine",
-                    brand: "Levophed",
-                    indication: "Septic shock / Distributive shock",
-                    std_dose: "2 - 20 mcg/min",
-                    std_route: "IV Infusion (Central line preferred)",
-                    std_prep: "4 mg in D5W/NSS 250 ml (16 mcg/ml)",
-                    source: "AHA Guidelines | Status: VERIFIED",
-                    usual_practice: "Levophed 1:250 (4mg/250ml) เริ่ม 30 ml/hr Titrate ตาม MAP >= 65",
-                    notes: "ระวัง peripheral extravasation รุนแรง หากไม่มี central line ต้องรีบเปิดเส้นใหญ่"
-                },
-                {
-                    id: "d2",
-                    generic: "Levetiracetam",
-                    brand: "Keppra",
-                    indication: "Status Epilepticus (Second-line)",
-                    std_dose: "60 mg/kg (Max 4,500 mg)",
-                    std_route: "IV Infusion over 15 mins",
-                    std_prep: "Keppra dose + NSS 100 ml",
-                    source: "AES Guidelines 2016",
-                    usual_practice: "Keppra 1,000 - 2,000 mg + NSS 100 ml IV drip in 15 mins",
-                    notes: "ปลอดภัยเรื่อง Hemodynamic แต่ห้าม IV push เร็วเด็ดขาด ต้องให้ผ่าน infusion 15 นาทีเสมอ"
-                },
-                {
-                    id: "d3",
-                    generic: "Midazolam / Diazepam",
-                    brand: "Dormicum / Valium",
-                    indication: "Active Seizure (No IV access)",
-                    std_dose: "Midazolam 10 mg (>40 kg) หรือ Diazepam 10-20 mg",
-                    std_route: "IM",
-                    std_prep: "Undiluted",
-                    source: "ER Protocols",
-                    usual_practice: "หากหาเส้นไม่ได้ให้ Midazolam 5-10 mg IM (ดีกว่า) หรือ Valium 10 mg IM ตามทรัพยากร",
-                    notes: "Valium ฉีด IM ดูดซึมไม่สม่ำเสมอ เตรียมเครื่องมือ Airway management เผื่อ Respiratory depression"
-                },
-                {
-                    id: "d4",
-                    generic: "Adenosine",
-                    brand: "Adenocor",
-                    indication: "SVT (Regular Narrow Complex Tachycardia)",
-                    std_dose: "1st dose: 6 mg / 2nd dose: 12 mg",
-                    std_route: "Rapid IV push",
-                    std_prep: "Undiluted (ยามาเป็น 6 mg / 2 ml)",
-                    source: "ACLS Tachycardia Algorithm",
-                    usual_practice: "ต่อ 3-way, Rapid IV push 6 mg เข้าเส้นเลือดใหญ่ ตามด้วย NSS flush 20 ml ทันทีพร้อมยกแขนขึ้น",
-                    notes: "เตือนคนไข้ก่อนฉีดว่าจะรู้สึกแน่นหน้าอก/หวิว และต้องติด Monitor EKG ตลอด"
-                },
-                {
-                    id: "d5",
-                    generic: "Epinephrine / Dexamethasone",
-                    brand: "Adrenaline / Dexa",
-                    indication: "Severe Asthma / Silent Chest",
-                    std_dose: "Adrenaline 0.3-0.5 mg IM / Dexa 8-10 mg IV",
-                    std_route: "IM / IV",
-                    std_prep: "Adrenaline 1:1,000 undiluted",
-                    source: "GINA Guidelines",
-                    usual_practice: "ถ้า Silent Chest พ่นยาไม่เข้า ให้ Adrenaline 0.3-0.5 ml IM ทันที + Load Dexa 8-10 mg IV",
-                    notes: "ระวัง Hypokalemia เตรียมอุปกรณ์ Intubation เสมอในเคส Silent Chest"
-                }
-            ],
-            ekg: [
-                {
-                    id: "e1",
-                    diagnosis: "Acute Posterior STEMI",
-                    danger: "Delayed reperfusion therapy",
-                    step1_see: "ST depression lead V1-V3 with tall, broad R waves and upright T waves",
-                    step2_localize: "Posterior wall (LCx or RCA)",
-                    step3_differentials: "Anterior NSTEMI, Posterior STEMI, RV strain",
-                    step4_immediate_danger: "Extensive myocardial necrosis without typical ST elevation",
-                    step5_management: "ทำ EKG Leads V7-V9 ทันที (เกณฑ์ >= 0.5 mm) เพื่อเปิด Cath Lab"
-                }
-            ],
-            procedures: [
-                {
-                    id: "p1",
-                    name: "Emergency Cricothyroidotomy",
-                    indication: "Cannot Intubate, Cannot Oxygenate (CICO)",
-                    contraindication: "Laryngeal trauma / Tracheal transection (relative)",
-                    equipment: "Scalpel No.11, Bougie, ET tube No.6.0, Tracheal hook",
-                    steps: "1. Stabilize larynx -> 2. กรีดแนวตั้งผ่านผิวหนัง -> 3. กรีดแนวนอนผ่าน cricothyroid membrane -> 4. สอด Bougie เข้า trachea -> 5. Railroad ท่อเบอร์ 6 ตาม bougie เข้าไป",
-                    confirmation: "EtCO2, Chest movement, Auscultation"
-                }
-            ],
-            srsCards: [
-                {
-                    id: "c1",
-                    topic: "Septic Shock Prescribing",
-                    question: "ต้องการให้ Levophed practical concentration และ starting rate เท่าไร?",
-                    answer: "Levophed 1:250 (4mg/250ml) เริ่ม 30 ml/hr Titrate ตาม MAP >= 65",
-                    interval: 0,
-                    repetition: 0,
-                    easeFactor: 2.5,
-                    dueDate: 0
-                },
-                {
-                    id: "c2",
-                    topic: "Status Epilepticus Second-line",
-                    question: "การให้ Levetiracetam (Keppra) ฉุกเฉิน ขนาดยาและวิธีให้ที่ถูกต้องคืออะไร?",
-                    answer: "Keppra 1,000 - 2,000 mg + NSS 100 ml IV drip ใน 15 นาที",
-                    interval: 0,
-                    repetition: 0,
-                    easeFactor: 2.5,
-                    dueDate: 0
-                },
-                {
-                    id: "c3",
-                    topic: "Acute Posterior STEMI EKG",
-                    question: "ลักษณะ EKG ของ Posterior STEMI ที่ต้องมองหาใน Leads V1-V3 คืออะไร?",
-                    answer: "ST depression ใน V1-V3 ร่วมกับ tall, broad R waves และ upright T waves",
-                    interval: 0,
-                    repetition: 0,
-                    easeFactor: 2.5,
-                    dueDate: 0
-                },
-                {
-                    id: "c4",
-                    topic: "Emergency Airway CICO",
-                    question: "ขั้นตอนหลักในการทำ Emergency Cricothyroidotomy หลังจากกรีด cricothyroid membrane แล้วคืออะไร?",
-                    answer: "สอด Bougie เข้า trachea แล้ว railroad ท่อเบอร์ 6 ตาม bougie เข้าไป",
-                    interval: 0,
-                    repetition: 0,
-                    easeFactor: 2.5,
-                    dueDate: 0
-                }
-            ]
-        };
+        // --- CPR Timer Logic ---
+        let cprSeconds = 0;
+        let cprTimerInterval = null;
 
-        const dbKey = 'er_brain_db_v3_srs';
-        if (!localStorage.getItem(dbKey)) {
-            localStorage.setItem(dbKey, JSON.stringify(initialDB));
-        }
-        let db = JSON.parse(localStorage.getItem(dbKey));
-        if (!db.srsCards) {
-            db.srsCards = initialDB.srsCards;
-            saveDB();
+        function startCPRTimer() {
+            if (cprTimerInterval) clearInterval(cprTimerInterval);
+            cprTimerInterval = setInterval(() => {
+                cprSeconds++;
+                let m = Math.floor(cprSeconds / 60).toString().padStart(2, '0');
+                let s = (cprSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('cpr-timer').textContent = `${m}:${s}`;
+            }, 1000);
         }
 
-        function saveDB() {
-            localStorage.setItem(dbKey, JSON.stringify(db));
+        function resetCPRTimer() {
+            if (cprTimerInterval) clearInterval(cprTimerInterval);
+            cprSeconds = 0;
+            document.getElementById('cpr-timer').textContent = "00:00";
         }
 
-        function setActiveNav(btnId) {
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            if (btnId) {
-                const btn = document.getElementById(btnId);
-                if (btn) btn.classList.add('active');
+        // --- SRS Engine Data & Logic ---
+        const DEFAULT_SRS_CARDS = [
+            {
+                id: "card-1",
+                category: "Resuscitation / Airway",
+                question: "ข้อบ่งชี้เด็ดขาด (Absolute Indications) ในการทำ Endotracheal Intubation มีอะไรบ้าง?",
+                answer: "1. Cardiac / Respiratory Arrest\n2. Inability to protect airway (Coma, GCS < 8, Loss of laryngeal reflexes)\n3. Inability to maintain adequate oxygenation or ventilation (Refractory hypoxemia/hypercapnia)\n4. Anticipated clinical deterioration (Severe shock, Status epilepticus, Massive facial/neck trauma)",
+                interval: 0,
+                reps: 0,
+                easeFactor: 2.5,
+                dueDate: new Date().toISOString()
+            },
+            {
+                id: "card-2",
+                category: "Cardiovascular / Shock",
+                question: "แนวทางจัดการเบื้องต้นในเคส Septic Shock ที่ยังคง Hypotension หลังให้ Fluid Challenge 30 ml/kg แล้ว?",
+                answer: "1. เริ่ม Norepinephrine ทางหลอดเลือดดำส่วนกลาง (หรือ Peripheral หลอดเลือดใหญ่ชั่วคราว) เพื่อรักษา MAP >= 65 mmHg\n2. ประเมิน Fluid responsiveness ซ้ำ (POCUS VCI / Passive Leg Raise)\n3. หากยัง Refractory พิจารณาเสริม Vasopressin หรือ Hydrocortisone (200 mg/day) ตามเกณฑ์",
+                interval: 0,
+                reps: 0,
+                easeFactor: 2.5,
+                dueDate: new Date().toISOString()
+            },
+            {
+                id: "card-3",
+                category: "Neurology / Emergency",
+                question: "เกณฑ์เวลาและข้อควรระวังสำคัญในการให้ IV Thrombolysis (rt-PA) ใน Acute Ischemic Stroke?",
+                answer: "1. Window period: ภายใน 4.5 ชั่วโมงตั้งแต่เริ่มมีอาการปกติครั้งสุดท้าย (Last Known Normal)\n2. ควบคุมความดันโลหิตให้ < 185/110 mmHg ก่อนให้ยา\n3. ตรวจ Blood Sugar ตัดภาวะ Hypoglycemia ออก และประเมิน Exclusion criteria เช่น Bleeding diathesis, Recent major surgery",
+                interval: 0,
+                reps: 0,
+                easeFactor: 2.5,
+                dueDate: new Date().toISOString()
             }
-        }
+        ];
 
-        // ==========================================
-        // SRS DAILY REVIEW MODULE
-        // ==========================================
+        let srsCards = [];
         let currentCardIndex = 0;
-        let dueCards = [];
 
-        function renderReview() {
-            setActiveNav('btn-review');
-            const now = Date.now();
-            dueCards = db.srsCards.filter(c => c.dueDate <= now);
-            if (dueCards.length === 0) {
-                dueCards = [...db.srsCards];
-            }
-            currentCardIndex = 0;
-            showSrsCard();
-        }
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLocalStorageData();
+            initSRSQueue();
+        });
 
-        function showSrsCard() {
-            const root = document.getElementById('app-root');
-            if (currentCardIndex >= dueCards.length) {
-                root.innerHTML = `
-                    <div style="text-align:center; padding:40px 20px;">
-                        <h2 style="color:var(--accent); margin-top:0;">🎉 ทบทวนครบทุกการ์ดแล้ว!</h2>
-                        <p style="color:var(--text-sub);">สมองของคุณได้รับการรีเฟรชความจำเรียบร้อยแล้ว เยี่ยมมากครับหมอ</p>
-                        <button class="btn" style="max-width:200px; margin:20px auto 0;" onclick="renderReview()">เริ่มทบทวนใหม่อีกรอบ</button>
-                    </div>
-                `;
-                return;
-            }
+        function switchModule(moduleId) {
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(`module-${moduleId}`).classList.remove('hidden');
 
-            const card = dueCards[currentCardIndex];
-            root.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <h3 style="margin:0; color:var(--accent);">🧠 Daily Review (SRS)</h3>
-                    <span style="font-size:0.75rem; color:var(--text-sub);">การ์ดที่ ${currentCardIndex + 1} จาก ${dueCards.length}</span>
-                </div>
-                
-                <div class="item-card" style="padding:16px;">
-                    <span style="display:inline-block; padding:3px 8px; font-size:0.7rem; border-radius:4px; font-weight:bold; background:#333; color:var(--warning); margin-bottom:8px;">🏷️ ${card.topic}</span>
-                    <p style="font-size:1.05rem; margin:8px 0 16px; font-weight:500;">${card.question}</p>
-                    
-                    <button class="btn-sub" id="reveal-btn" onclick="revealAnswer()" style="width:100%; padding:10px; background:#2a2a2a; border-color:var(--border);">👁️ เปิดดูเฉลย</button>
-                    
-                    <div id="answer-section" style="display:none; margin-top:16px;">
-                        <div class="usual-box" style="padding:12px; font-size:0.95rem;">
-                            <strong>เฉลย (My Usual Practice):</strong><br>${card.answer}
-                        </div>
-                        <p style="font-size:0.8rem; color:var(--text-sub); margin:12px 0 6px; text-align:center;">ประเมินระดับความยากในการจำข้อนี้:</p>
-                        <div style="display:flex; gap:8px;">
-                            <button class="btn-srs-again" onclick="gradeCard('again')">🔴 ลืมสนิท (Again)</button>
-                            <button class="btn-srs-good" onclick="gradeCard('good')">🟡 พอจำได้ (Good)</button>
-                            <button class="btn-srs-easy" onclick="gradeCard('easy')">🟢 จำได้แม่น (Easy)</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function revealAnswer() {
-            document.getElementById('reveal-btn').style.display = 'none';
-            document.getElementById('answer-section').style.display = 'block';
-        }
-
-        function gradeCard(grade) {
-            const card = dueCards[currentCardIndex];
-            const originalCard = db.srsCards.find(c => c.id === card.id);
-            const now = Date.now();
-            const ONE_DAY = 24 * 60 * 60 * 1000;
-
-            if (grade === 'again') {
-                originalCard.repetition = 0;
-                originalCard.interval = 0;
-                originalCard.dueDate = now;
-            } else if (grade === 'good') {
-                originalCard.repetition += 1;
-                if (originalCard.repetition === 1) originalCard.interval = 1;
-                else if (originalCard.repetition === 2) originalCard.interval = 3;
-                else originalCard.interval = Math.round(originalCard.interval * originalCard.easeFactor);
-                originalCard.dueDate = now + (originalCard.interval * ONE_DAY);
-            } else if (grade === 'easy') {
-                originalCard.repetition += 1;
-                originalCard.easeFactor += 0.15;
-                if (originalCard.repetition === 1) originalCard.interval = 3;
-                else originalCard.interval = Math.round(originalCard.interval * originalCard.easeFactor * 1.3);
-                originalCard.dueDate = now + (originalCard.interval * ONE_DAY);
-            }
-
-            saveDB();
-            currentCardIndex++;
-            showSrsCard();
-        }
-
-        // ==========================================
-        // DRUGS MODULE WITH SEARCH BAR
-        // ==========================================
-        function renderDrugs() {
-            setActiveNav('btn-drugs');
-            const root = document.getElementById('app-root');
-            root.innerHTML = `
-                <h3 style="margin-top:0;">💊 Emergency Drugs</h3>
-                <input type="text" id="drug-search" placeholder="🔍 ค้นหา Generic หรือ Brand..." oninput="filterDrugs(this.value)">
-                <div id="drug-container"></div>
-            `;
-            updateDrugList(db.drugs);
-        }
-
-        function updateDrugList(list) {
-            const container = document.getElementById('drug-container');
-            if (!container) return;
-            if (list.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:var(--text-sub); padding:20px;">ไม่พบรายการยาที่ค้นหา</p>`;
-                return;
-            }
-            let html = '';
-            list.forEach(d => {
-                html += `
-                    <div class="item-card">
-                        <strong style="font-size:1rem; color:#fff;">${d.generic} (${d.brand})</strong>
-                        <p style="margin:4px 0 8px; font-size:0.85rem; color:var(--text-sub);">Indication: ${d.indication}</p>
-                        <div class="standard-box">
-                            <strong style="color:var(--accent);">📋 Standard Practice</strong><br>Dose: ${d.std_dose} | Route: ${d.std_route}<br>Prep: ${d.std_prep}
-                        </div>
-                        <div class="usual-box">
-                            <strong style="color:var(--warning);">⚡ My Usual Practice</strong><br>${d.usual_practice}<br><span style="font-size:0.80rem; color:#ccc;">Note: ${d.notes}</span>
-                        </div>
-                    </div>
-                `;
+            document.querySelectorAll('.module-nav').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
             });
-            container.innerHTML = html;
-        }
+            const activeBtn = document.getElementById(`nav-${moduleId}`);
+            activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+            activeBtn.classList.add('bg-blue-600', 'text-white');
 
-        function filterDrugs(kw) {
-            const res = db.drugs.filter(d => 
-                d.generic.toLowerCase().includes(kw.toLowerCase()) || 
-                d.brand.toLowerCase().includes(kw.toLowerCase()) ||
-                d.indication.toLowerCase().includes(kw.toLowerCase())
-            );
-            updateDrugList(res);
-        }
-
-        // ==========================================
-        // SETTINGS & BACKUP / EXPORT / IMPORT
-        // ==========================================
-        function renderSettings() {
-            setActiveNav(null);
-            const root = document.getElementById('app-root');
-            root.innerHTML = `
-                <h3 style="margin-top:0; color:var(--accent);">⚙️ ระบบจัดการข้อมูล & สำรองข้อมูล</h3>
-                <p style="font-size:0.85rem; color:var(--text-sub);">ไฟล์ JSON สำรองจะบันทึกข้อมูลยาทั้งหมดและสถิติ SRS ของคุณไว้ครบถ้วน</p>
-                
-                <div class="item-card" style="margin-top:20px;">
-                    <strong style="color:var(--accent); font-size:1rem;">💾 สำรองข้อมูล (Export JSON)</strong>
-                    <button class="btn" style="margin-top:8px;" onclick="exportData()">ดาวน์โหลดไฟล์ Backup</button>
-                </div>
-
-                <div class="item-card" style="margin-top:20px;">
-                    <strong style="color:var(--warning); font-size:1rem;">📂 กู้คืนข้อมูล (Import JSON)</strong>
-                    <input type="file" id="import-file" accept=".json" style="background:transparent; border:1px solid #444; padding:6px; font-size:0.8rem; margin:8px 0;">
-                    <button class="btn" style="background:var(--warning); color:#000;" onclick="importData()">นำเข้าข้อมูล</button>
-                </div>
-
-                <div class="item-card" style="margin-top:30px; border-color:var(--danger);">
-                    <strong style="color:var(--danger); font-size:1rem;">🔄 รีเซ็ตข้อมูลทั้งหมด</strong>
-                    <button class="btn" style="background:var(--danger); color:#000; margin-top:8px;" onclick="localStorage.clear(); location.reload();">ล้างข้อมูลและรีเซ็ต</button>
-                </div>
-            `;
-        }
-
-        function exportData() {
-            const dataStr = JSON.stringify(db, null, 4);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', 'ER_External_Brain_Backup.json');
-            document.body.appendChild(linkElement);
-            linkElement.click();
-            document.body.removeChild(linkElement);
-        }
-
-        function importData() {
-            const fileInput = document.getElementById('import-file');
-            if (!fileInput.files.length) {
-                alert("กรุณาเลือกไฟล์ .json ก่อนครับ");
-                return;
+            if(moduleId === 'daily-review') {
+                initSRSQueue();
             }
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) {
+        }
+
+        function loadLocalStorageData() {
+            const saved = localStorage.getItem('er_brain_srs_cards');
+            if (saved) {
                 try {
-                    const importedDB = JSON.parse(e.target.result);
-                    if (importedDB && Array.isArray(importedDB.drugs)) {
-                        db = importedDB;
-                        saveDB();
-                        alert("✅ นำเข้าข้อมูลสำเร็จ!");
-                        renderReview();
-                    } else {
-                        alert("❌ โครงสร้างไฟล์ไม่ถูกต้อง");
-                    }
-                } catch (err) {
-                    alert("❌ เกิดข้อผิดพลาดในการอ่านไฟล์: " + err);
+                    srsCards = JSON.parse(saved);
+                } catch (e) {
+                    srsCards = DEFAULT_SRS_CARDS;
                 }
+            } else {
+                srsCards = DEFAULT_SRS_CARDS;
+                saveLocalStorageData();
+            }
+        }
+
+        function saveLocalStorageData() {
+            localStorage.setItem('er_brain_srs_cards', JSON.stringify(srsCards));
+        }
+
+        function initSRSQueue() {
+            const now = new Date();
+            const dueCards = srsCards.filter(c => new Date(c.dueDate) <= now);
+            
+            document.getElementById('due-count-badge').textContent = `ครบกำหนดทบทวน: ${dueCards.length} ข้อ`;
+
+            if (dueCards.length > 0) {
+                currentCardIndex = srsCards.findIndex(c => c.id === dueCards[0].id);
+                renderCurrentCard();
+                document.getElementById('srs-card-container').classList.remove('hidden');
+                document.getElementById('srs-empty-state').classList.add('hidden');
+            } else {
+                document.getElementById('srs-card-container').classList.add('hidden');
+                document.getElementById('srs-empty-state').classList.remove('hidden');
+            }
+        }
+
+        function renderCurrentCard() {
+            const card = srsCards[currentCardIndex];
+            document.getElementById('srs-card-category').textContent = card.category;
+            document.getElementById('srs-card-stats').textContent = `Interval: ${card.interval}d | Reps: ${card.reps} | EF: ${card.easeFactor.toFixed(2)}`;
+            document.getElementById('srs-question').textContent = card.question;
+            document.getElementById('srs-answer').textContent = card.answer;
+            
+            document.getElementById('srs-answer-section').classList.add('hidden');
+            document.getElementById('srs-action-reveal').classList.remove('hidden');
+        }
+
+        function revealSRSAnswer() {
+            document.getElementById('srs-answer-section').classList.remove('hidden');
+            document.getElementById('srs-action-reveal').classList.add('hidden');
+        }
+
+        function rateSRS(rating) {
+            const card = srsCards[currentCardIndex];
+            let interval = card.interval;
+            let reps = card.reps;
+            let ef = card.easeFactor;
+
+            if (rating === 'again') {
+                reps = 0;
+                interval = 1;
+                ef = Math.max(1.3, ef - 0.2);
+            } else if (rating === 'good') {
+                reps += 1;
+                if (reps === 1) interval = 1;
+                else if (reps === 2) interval = 6;
+                else interval = Math.round(card.interval * ef);
+            } else if (rating === 'easy') {
+                reps += 1;
+                ef += 0.15;
+                if (reps === 1) interval = 4;
+                else interval = Math.round(card.interval * ef * 1.3);
+            }
+
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + interval);
+
+            card.interval = interval;
+            card.reps = reps;
+            card.easeFactor = ef;
+            card.dueDate = dueDate.toISOString();
+
+            saveLocalStorageData();
+            initSRSQueue();
+        }
+
+        function exportDataJSON() {
+            const exportData = {
+                version: "3.1",
+                exportDate: new Date().toISOString(),
+                srsCards: srsCards
             };
-            reader.readAsText(file);
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `ER_Brain_SRS_Backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
         }
 
-        function renderEKG() {
-            setActiveNav('btn-ekg');
-            const root = document.getElementById('app-root');
-            let html = `<h3 style="margin-top:0;">❤️ EKG Error Bank</h3>`;
-            db.ekg.forEach(e => {
-                html += `
-                    <div class="item-card">
-                        <strong style="color:var(--warning); font-size:1rem;">${e.diagnosis}</strong>
-                        <p style="margin:6px 0; color:var(--danger); font-size:0.85rem;">Danger: ${e.danger}</p>
-                        <div style="font-size:0.85rem; background:#1c1c1c; padding:10px; border-radius:6px;">
-                            <div><strong>See:</strong> ${e.step1_see}</div>
-                            <div style="margin-top:4px;"><strong>Action:</strong> ${e.step5_management}</div>
-                        </div>
-                    </div>
-                `;
-            });
-            root.innerHTML = html;
+        function importDataJSON(event) {
+            const fileReader = new FileReader();
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0], "UTF-8");
+                fileReader.onload = (e) => {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        if (parsed.srsCards && Array.isArray(parsed.srsCards)) {
+                            srsCards = parsed.srsCards;
+                            saveLocalStorageData();
+                            alert("นำเข้าข้อมูล SRS สำเร็จเรียบร้อย!");
+                            initSRSQueue();
+                        } else {
+                            alert("รูปแบบไฟล์ JSON ไม่ถูกต้อง (ไม่พบโครงสร้าง srsCards)");
+                        }
+                    } catch (error) {
+                        alert("เกิดข้อผิดพลาดในการอ่านไฟล์ JSON: " + error.message);
+                    }
+                };
+            }
         }
-
-        function renderProcedures() {
-            setActiveNav('btn-procedures');
-            const root = document.getElementById('app-root');
-            let html = `<h3 style="margin-top:0;">🔧 Procedure Cards</h3>`;
-            db.procedures.forEach(p => {
-                html += `
-                    <div class="item-card">
-                        <strong style="color:var(--accent); font-size:1rem;">${p.name}</strong>
-                        <p style="margin:6px 0; font-size:0.85rem;"><strong>Indication:</strong> ${p.indication}</p>
-                        <div class="usual-box"><strong>Steps:</strong><br>${p.steps}</div>
-                    </div>
-                `;
-            });
-            root.innerHTML = html;
-        }
-
-        renderReview();
     </script>
 </body>
 </html>
