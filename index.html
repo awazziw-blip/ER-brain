@@ -139,7 +139,7 @@
     <header>
         <div class="header-left">
             <h1>MY ER EXTERNAL BRAIN</h1>
-            <span class="badge">v3.0 SRS</span>
+            <span class="badge">v3.1 SRS + Search</span>
         </div>
         <button class="btn-sub" onclick="renderSettings()" style="width: auto; background: var(--surface);">⚙️ ตั้งค่า</button>
     </header>
@@ -166,7 +166,6 @@
     <div id="app-root" class="content-box"></div>
 
     <script>
-        // ฐานข้อมูลฉบับสมบูรณ์ พร้อมรองรับ SRS metadata (interval, repetition, easeFactor, dueDate)
         const initialDB = {
             drugs: [
                 {
@@ -253,17 +252,16 @@
                     confirmation: "EtCO2, Chest movement, Auscultation"
                 }
             ],
-            // Flashcards สำหรับ SRS Daily Review
             srsCards: [
                 {
                     id: "c1",
                     topic: "Septic Shock Prescribing",
                     question: "ต้องการให้ Levophed practical concentration และ starting rate เท่าไร?",
                     answer: "Levophed 1:250 (4mg/250ml) เริ่ม 30 ml/hr Titrate ตาม MAP >= 65",
-                    interval: 0,       // จำนวนวันที่เว้นรอบถัดไป
-                    repetition: 0,   // จำนวนครั้งที่ทบทวนสำเร็จติดกัน
-                    easeFactor: 2.5, // ตัวคูณความยาก
-                    dueDate: 0       // timestamp ของวันที่ต้องทบทวนรอบถัดไป (0 คือถึงกำหนดทันที)
+                    interval: 0,
+                    repetition: 0,
+                    easeFactor: 2.5,
+                    dueDate: 0
                 },
                 {
                     id: "c2",
@@ -303,7 +301,6 @@
             localStorage.setItem(dbKey, JSON.stringify(initialDB));
         }
         let db = JSON.parse(localStorage.getItem(dbKey));
-        // ถ้าฐานข้อมูลเดิมไม่มี srsCards ให้เพิ่มเข้าไป
         if (!db.srsCards) {
             db.srsCards = initialDB.srsCards;
             saveDB();
@@ -330,10 +327,9 @@
         function renderReview() {
             setActiveNav('btn-review');
             const now = Date.now();
-            // กรองการ์ดที่ถึงกำหนดทบทวน (dueDate <= now) หรือถ้าไม่มี ให้เอาทั้งหมดมาทบทวนซ้ำได้
             dueCards = db.srsCards.filter(c => c.dueDate <= now);
             if (dueCards.length === 0) {
-                dueCards = [...db.srsCards]; // ถ้าทบทวนครบหมดแล้ว นำทั้งหมดมารีวิววนซ้ำรอบใหม่ได้
+                dueCards = [...db.srsCards];
             }
             currentCardIndex = 0;
             showSrsCard();
@@ -360,7 +356,7 @@
                 </div>
                 
                 <div class="item-card" style="padding:16px;">
-                    <span class="tag" style="background:#333; color:var(--warning); margin-bottom:8px; display:inline-block;">🏷️ ${card.topic}</span>
+                    <span style="display:inline-block; padding:3px 8px; font-size:0.7rem; border-radius:4px; font-weight:bold; background:#333; color:var(--warning); margin-bottom:8px;">🏷️ ${card.topic}</span>
                     <p style="font-size:1.05rem; margin:8px 0 16px; font-weight:500;">${card.question}</p>
                     
                     <button class="btn-sub" id="reveal-btn" onclick="revealAnswer()" style="width:100%; padding:10px; background:#2a2a2a; border-color:var(--border);">👁️ เปิดดูเฉลย</button>
@@ -391,21 +387,20 @@
             const now = Date.now();
             const ONE_DAY = 24 * 60 * 60 * 1000;
 
-            // อัลกอริทึม SRS (Spaced Repetition ปรับปรุงจาก SM-2)
             if (grade === 'again') {
                 originalCard.repetition = 0;
-                originalCard.interval = 0; // ทบทวนซ้ำทันทีในรอบถัดไปหรือพรุ่งนี้
-                originalCard.dueDate = now; // กำหนดให้ถึงกำหนดทันที
+                originalCard.interval = 0;
+                originalCard.dueDate = now;
             } else if (grade === 'good') {
                 originalCard.repetition += 1;
-                if (originalCard.repetition === 1) originalCard.interval = 1; // 1 วัน
-                else if (originalCard.repetition === 2) originalCard.interval = 3; // 3 วัน
+                if (originalCard.repetition === 1) originalCard.interval = 1;
+                else if (originalCard.repetition === 2) originalCard.interval = 3;
                 else originalCard.interval = Math.round(originalCard.interval * originalCard.easeFactor);
                 originalCard.dueDate = now + (originalCard.interval * ONE_DAY);
             } else if (grade === 'easy') {
                 originalCard.repetition += 1;
-                originalCard.easeFactor += 0.15; // เพิ่มความง่าย
-                if (originalCard.repetition === 1) originalCard.interval = 3; // 3 วัน
+                originalCard.easeFactor += 0.15;
+                if (originalCard.repetition === 1) originalCard.interval = 3;
                 else originalCard.interval = Math.round(originalCard.interval * originalCard.easeFactor * 1.3);
                 originalCard.dueDate = now + (originalCard.interval * ONE_DAY);
             }
@@ -416,85 +411,28 @@
         }
 
         // ==========================================
-        // SETTINGS & BACKUP / EXPORT / IMPORT
-        // ==========================================
-        function renderSettings() {
-            setActiveNav(null);
-            const root = document.getElementById('app-root');
-            root.innerHTML = `
-                <h3 style="margin-top:0; color:var(--accent);">⚙️ ระบบจัดการข้อมูล & สำรองข้อมูล (SRS Sync)</h3>
-                <p style="font-size:0.85rem; color:var(--text-sub);">ไฟล์ JSON สำรองจะบันทึกทั้งข้อมูลยา EKG Procedures และสถิติความจำ SRS ของคุณไว้ทั้งหมด</p>
-                
-                <div class="item-card" style="margin-top:20px;">
-                    <strong style="color:var(--accent); font-size:1rem;">💾 สำรองข้อมูล (Export JSON)</strong>
-                    <p style="font-size:0.85rem; color:var(--text-sub);">ดาวน์โหลดฐานข้อมูลและสถิติ SRS ทั้งหมดเก็บไว้เป็นไฟล์</p>
-                    <button class="btn" onclick="exportData()">ดาวน์โหลดไฟล์ Backup</button>
-                </div>
-
-                <div class="item-card" style="margin-top:20px;">
-                    <strong style="color:var(--warning); font-size:1rem;">📂 กู้คืน/นำเข้าข้อมูล (Import JSON)</strong>
-                    <p style="font-size:0.85rem; color:var(--text-sub);">เลือกไฟล์ Backup เพื่อกู้คืนฐานข้อมูลและสถานะ SRS</p>
-                    <input type="file" id="import-file" accept=".json" style="background:transparent; border:1px solid #444; padding:6px; font-size:0.8rem; margin-bottom:8px;">
-                    <button class="btn" style="background:var(--warning); color:#000;" onclick="importData()">นำเข้าข้อมูล</button>
-                </div>
-
-                <div class="item-card" style="margin-top:30px; border-color:var(--danger);">
-                    <strong style="color:var(--danger); font-size:1rem;">🔄 ล้างแคชและรีเซ็ตข้อมูลทั้งหมด</strong>
-                    <p style="font-size:0.85rem; color:var(--text-sub);">ล้างหน่วยความจำและคืนค่าเริ่มต้นทั้งหมดในเครื่อง</p>
-                    <button class="btn" style="background:var(--danger); color:#000;" onclick="localStorage.clear(); location.reload();">ล้างข้อมูลและรีเซ็ต</button>
-                </div>
-            `;
-        }
-
-        function exportData() {
-            const dataStr = JSON.stringify(db, null, 4);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = 'ER_External_Brain_SRS_' + new Date().toISOString().slice(0,10) + '.json';
-
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            document.body.appendChild(linkElement);
-            linkElement.click();
-            document.body.removeChild(linkElement);
-        }
-
-        function importData() {
-            const fileInput = document.getElementById('import-file');
-            if (!fileInput.files.length) {
-                alert("กรุณาเลือกไฟล์ .json ก่อนครับ");
-                return;
-            }
-            
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    const importedDB = JSON.parse(e.target.result);
-                    if (importedDB && Array.isArray(importedDB.drugs) && Array.isArray(importedDB.srsCards)) {
-                        db = importedDB;
-                        saveDB();
-                        alert("✅ นำเข้าข้อมูลและสถิติ SRS สำเร็จ!");
-                        renderReview();
-                    } else {
-                        alert("❌ ไฟล์ไม่ถูกต้อง โครงสร้างข้อมูลไม่ตรงกับระบบ SRS");
-                    }
-                } catch (err) {
-                    alert("❌ เกิดข้อผิดพลาดในการอ่านไฟล์: " + err);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // ==========================================
-        // OTHER MODULES
+        // DRUGS MODULE WITH SEARCH BAR
         // ==========================================
         function renderDrugs() {
             setActiveNav('btn-drugs');
             const root = document.getElementById('app-root');
-            let html = `<h3 style="margin-top:0;">💊 Emergency Drugs (${db.drugs.length} รายการ)</h3>`;
-            db.drugs.forEach(d => {
+            root.innerHTML = `
+                <h3 style="margin-top:0;">💊 Emergency Drugs</h3>
+                <input type="text" id="drug-search" placeholder="🔍 ค้นหา Generic หรือ Brand..." oninput="filterDrugs(this.value)">
+                <div id="drug-container"></div>
+            `;
+            updateDrugList(db.drugs);
+        }
+
+        function updateDrugList(list) {
+            const container = document.getElementById('drug-container');
+            if (!container) return;
+            if (list.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:var(--text-sub); padding:20px;">ไม่พบรายการยาที่ค้นหา</p>`;
+                return;
+            }
+            let html = '';
+            list.forEach(d => {
                 html += `
                     <div class="item-card">
                         <strong style="font-size:1rem; color:#fff;">${d.generic} (${d.brand})</strong>
@@ -508,7 +446,81 @@
                     </div>
                 `;
             });
-            root.innerHTML = html;
+            container.innerHTML = html;
+        }
+
+        function filterDrugs(kw) {
+            const res = db.drugs.filter(d => 
+                d.generic.toLowerCase().includes(kw.toLowerCase()) || 
+                d.brand.toLowerCase().includes(kw.toLowerCase()) ||
+                d.indication.toLowerCase().includes(kw.toLowerCase())
+            );
+            updateDrugList(res);
+        }
+
+        // ==========================================
+        // SETTINGS & BACKUP / EXPORT / IMPORT
+        // ==========================================
+        function renderSettings() {
+            setActiveNav(null);
+            const root = document.getElementById('app-root');
+            root.innerHTML = `
+                <h3 style="margin-top:0; color:var(--accent);">⚙️ ระบบจัดการข้อมูล & สำรองข้อมูล</h3>
+                <p style="font-size:0.85rem; color:var(--text-sub);">ไฟล์ JSON สำรองจะบันทึกข้อมูลยาทั้งหมดและสถิติ SRS ของคุณไว้ครบถ้วน</p>
+                
+                <div class="item-card" style="margin-top:20px;">
+                    <strong style="color:var(--accent); font-size:1rem;">💾 สำรองข้อมูล (Export JSON)</strong>
+                    <button class="btn" style="margin-top:8px;" onclick="exportData()">ดาวน์โหลดไฟล์ Backup</button>
+                </div>
+
+                <div class="item-card" style="margin-top:20px;">
+                    <strong style="color:var(--warning); font-size:1rem;">📂 กู้คืนข้อมูล (Import JSON)</strong>
+                    <input type="file" id="import-file" accept=".json" style="background:transparent; border:1px solid #444; padding:6px; font-size:0.8rem; margin:8px 0;">
+                    <button class="btn" style="background:var(--warning); color:#000;" onclick="importData()">นำเข้าข้อมูล</button>
+                </div>
+
+                <div class="item-card" style="margin-top:30px; border-color:var(--danger);">
+                    <strong style="color:var(--danger); font-size:1rem;">🔄 รีเซ็ตข้อมูลทั้งหมด</strong>
+                    <button class="btn" style="background:var(--danger); color:#000; margin-top:8px;" onclick="localStorage.clear(); location.reload();">ล้างข้อมูลและรีเซ็ต</button>
+                </div>
+            `;
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(db, null, 4);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', 'ER_External_Brain_Backup.json');
+            document.body.appendChild(linkElement);
+            linkElement.click();
+            document.body.removeChild(linkElement);
+        }
+
+        function importData() {
+            const fileInput = document.getElementById('import-file');
+            if (!fileInput.files.length) {
+                alert("กรุณาเลือกไฟล์ .json ก่อนครับ");
+                return;
+            }
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedDB = JSON.parse(e.target.result);
+                    if (importedDB && Array.isArray(importedDB.drugs)) {
+                        db = importedDB;
+                        saveDB();
+                        alert("✅ นำเข้าข้อมูลสำเร็จ!");
+                        renderReview();
+                    } else {
+                        alert("❌ โครงสร้างไฟล์ไม่ถูกต้อง");
+                    }
+                } catch (err) {
+                    alert("❌ เกิดข้อผิดพลาดในการอ่านไฟล์: " + err);
+                }
+            };
+            reader.readAsText(file);
         }
 
         function renderEKG() {
