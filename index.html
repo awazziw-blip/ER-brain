@@ -86,6 +86,7 @@
             cursor: pointer;
             font-size: 0.9rem;
             width: 100%;
+            margin-top: 6px;
         }
         .btn-sub {
             background: #333;
@@ -96,6 +97,10 @@
             border-radius: 4px;
             cursor: pointer;
         }
+        .btn-srs-again { background: var(--danger); color: #000; font-weight: bold; flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; }
+        .btn-srs-good { background: var(--warning); color: #000; font-weight: bold; flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; }
+        .btn-srs-easy { background: var(--accent); color: #000; font-weight: bold; flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; }
+        
         input, select, textarea {
             width: 100%;
             padding: 10px;
@@ -134,15 +139,15 @@
     <header>
         <div class="header-left">
             <h1>MY ER EXTERNAL BRAIN</h1>
-            <span class="badge">v2.0 FIXED</span>
+            <span class="badge">v3.0 SRS</span>
         </div>
         <button class="btn-sub" onclick="renderSettings()" style="width: auto; background: var(--surface);">⚙️ ตั้งค่า</button>
     </header>
 
     <div class="nav-grid">
         <button class="nav-btn" onclick="renderReview()" id="btn-review">
-            <h3>🧠 Daily Review</h3>
-            <span>Adaptive (&lt;=15m)</span>
+            <h3>🧠 Daily Review (SRS)</h3>
+            <span>Smart Spaced Repetition</span>
         </button>
         <button class="nav-btn" onclick="renderDrugs()" id="btn-drugs">
             <h3>💊 Drugs</h3>
@@ -161,6 +166,7 @@
     <div id="app-root" class="content-box"></div>
 
     <script>
+        // ฐานข้อมูลฉบับสมบูรณ์ พร้อมรองรับ SRS metadata (interval, repetition, easeFactor, dueDate)
         const initialDB = {
             drugs: [
                 {
@@ -246,12 +252,62 @@
                     steps: "1. Stabilize larynx -> 2. กรีดแนวตั้งผ่านผิวหนัง -> 3. กรีดแนวนอนผ่าน cricothyroid membrane -> 4. สอด Bougie เข้า trachea -> 5. Railroad ท่อเบอร์ 6 ตาม bougie เข้าไป",
                     confirmation: "EtCO2, Chest movement, Auscultation"
                 }
+            ],
+            // Flashcards สำหรับ SRS Daily Review
+            srsCards: [
+                {
+                    id: "c1",
+                    topic: "Septic Shock Prescribing",
+                    question: "ต้องการให้ Levophed practical concentration และ starting rate เท่าไร?",
+                    answer: "Levophed 1:250 (4mg/250ml) เริ่ม 30 ml/hr Titrate ตาม MAP >= 65",
+                    interval: 0,       // จำนวนวันที่เว้นรอบถัดไป
+                    repetition: 0,   // จำนวนครั้งที่ทบทวนสำเร็จติดกัน
+                    easeFactor: 2.5, // ตัวคูณความยาก
+                    dueDate: 0       // timestamp ของวันที่ต้องทบทวนรอบถัดไป (0 คือถึงกำหนดทันที)
+                },
+                {
+                    id: "c2",
+                    topic: "Status Epilepticus Second-line",
+                    question: "การให้ Levetiracetam (Keppra) ฉุกเฉิน ขนาดยาและวิธีให้ที่ถูกต้องคืออะไร?",
+                    answer: "Keppra 1,000 - 2,000 mg + NSS 100 ml IV drip ใน 15 นาที",
+                    interval: 0,
+                    repetition: 0,
+                    easeFactor: 2.5,
+                    dueDate: 0
+                },
+                {
+                    id: "c3",
+                    topic: "Acute Posterior STEMI EKG",
+                    question: "ลักษณะ EKG ของ Posterior STEMI ที่ต้องมองหาใน Leads V1-V3 คืออะไร?",
+                    answer: "ST depression ใน V1-V3 ร่วมกับ tall, broad R waves และ upright T waves",
+                    interval: 0,
+                    repetition: 0,
+                    easeFactor: 2.5,
+                    dueDate: 0
+                },
+                {
+                    id: "c4",
+                    topic: "Emergency Airway CICO",
+                    question: "ขั้นตอนหลักในการทำ Emergency Cricothyroidotomy หลังจากกรีด cricothyroid membrane แล้วคืออะไร?",
+                    answer: "สอด Bougie เข้า trachea แล้ว railroad ท่อเบอร์ 6 ตาม bougie เข้าไป",
+                    interval: 0,
+                    repetition: 0,
+                    easeFactor: 2.5,
+                    dueDate: 0
+                }
             ]
         };
 
-        const dbKey = 'er_brain_db_v2_final';
-        localStorage.setItem(dbKey, JSON.stringify(initialDB));
+        const dbKey = 'er_brain_db_v3_srs';
+        if (!localStorage.getItem(dbKey)) {
+            localStorage.setItem(dbKey, JSON.stringify(initialDB));
+        }
         let db = JSON.parse(localStorage.getItem(dbKey));
+        // ถ้าฐานข้อมูลเดิมไม่มี srsCards ให้เพิ่มเข้าไป
+        if (!db.srsCards) {
+            db.srsCards = initialDB.srsCards;
+            saveDB();
+        }
 
         function saveDB() {
             localStorage.setItem(dbKey, JSON.stringify(db));
@@ -265,18 +321,127 @@
             }
         }
 
+        // ==========================================
+        // SRS DAILY REVIEW MODULE
+        // ==========================================
+        let currentCardIndex = 0;
+        let dueCards = [];
+
+        function renderReview() {
+            setActiveNav('btn-review');
+            const now = Date.now();
+            // กรองการ์ดที่ถึงกำหนดทบทวน (dueDate <= now) หรือถ้าไม่มี ให้เอาทั้งหมดมาทบทวนซ้ำได้
+            dueCards = db.srsCards.filter(c => c.dueDate <= now);
+            if (dueCards.length === 0) {
+                dueCards = [...db.srsCards]; // ถ้าทบทวนครบหมดแล้ว นำทั้งหมดมารีวิววนซ้ำรอบใหม่ได้
+            }
+            currentCardIndex = 0;
+            showSrsCard();
+        }
+
+        function showSrsCard() {
+            const root = document.getElementById('app-root');
+            if (currentCardIndex >= dueCards.length) {
+                root.innerHTML = `
+                    <div style="text-align:center; padding:40px 20px;">
+                        <h2 style="color:var(--accent); margin-top:0;">🎉 ทบทวนครบทุกการ์ดแล้ว!</h2>
+                        <p style="color:var(--text-sub);">สมองของคุณได้รับการรีเฟรชความจำเรียบร้อยแล้ว เยี่ยมมากครับหมอ</p>
+                        <button class="btn" style="max-width:200px; margin:20px auto 0;" onclick="renderReview()">เริ่มทบทวนใหม่อีกรอบ</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const card = dueCards[currentCardIndex];
+            root.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h3 style="margin:0; color:var(--accent);">🧠 Daily Review (SRS)</h3>
+                    <span style="font-size:0.75rem; color:var(--text-sub);">การ์ดที่ ${currentCardIndex + 1} จาก ${dueCards.length}</span>
+                </div>
+                
+                <div class="item-card" style="padding:16px;">
+                    <span class="tag" style="background:#333; color:var(--warning); margin-bottom:8px; display:inline-block;">🏷️ ${card.topic}</span>
+                    <p style="font-size:1.05rem; margin:8px 0 16px; font-weight:500;">${card.question}</p>
+                    
+                    <button class="btn-sub" id="reveal-btn" onclick="revealAnswer()" style="width:100%; padding:10px; background:#2a2a2a; border-color:var(--border);">👁️ เปิดดูเฉลย</button>
+                    
+                    <div id="answer-section" style="display:none; margin-top:16px;">
+                        <div class="usual-box" style="padding:12px; font-size:0.95rem;">
+                            <strong>เฉลย (My Usual Practice):</strong><br>${card.answer}
+                        </div>
+                        <p style="font-size:0.8rem; color:var(--text-sub); margin:12px 0 6px; text-align:center;">ประเมินระดับความยากในการจำข้อนี้:</p>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn-srs-again" onclick="gradeCard('again')">🔴 ลืมสนิท (Again)</button>
+                            <button class="btn-srs-good" onclick="gradeCard('good')">🟡 พอจำได้ (Good)</button>
+                            <button class="btn-srs-easy" onclick="gradeCard('easy')">🟢 จำได้แม่น (Easy)</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function revealAnswer() {
+            document.getElementById('reveal-btn').style.display = 'none';
+            document.getElementById('answer-section').style.display = 'block';
+        }
+
+        function gradeCard(grade) {
+            const card = dueCards[currentCardIndex];
+            const originalCard = db.srsCards.find(c => c.id === card.id);
+            const now = Date.now();
+            const ONE_DAY = 24 * 60 * 60 * 1000;
+
+            // อัลกอริทึม SRS (Spaced Repetition ปรับปรุงจาก SM-2)
+            if (grade === 'again') {
+                originalCard.repetition = 0;
+                originalCard.interval = 0; // ทบทวนซ้ำทันทีในรอบถัดไปหรือพรุ่งนี้
+                originalCard.dueDate = now; // กำหนดให้ถึงกำหนดทันที
+            } else if (grade === 'good') {
+                originalCard.repetition += 1;
+                if (originalCard.repetition === 1) originalCard.interval = 1; // 1 วัน
+                else if (originalCard.repetition === 2) originalCard.interval = 3; // 3 วัน
+                else originalCard.interval = Math.round(originalCard.interval * originalCard.easeFactor);
+                originalCard.dueDate = now + (originalCard.interval * ONE_DAY);
+            } else if (grade === 'easy') {
+                originalCard.repetition += 1;
+                originalCard.easeFactor += 0.15; // เพิ่มความง่าย
+                if (originalCard.repetition === 1) originalCard.interval = 3; // 3 วัน
+                else originalCard.interval = Math.round(originalCard.interval * originalCard.easeFactor * 1.3);
+                originalCard.dueDate = now + (originalCard.interval * ONE_DAY);
+            }
+
+            saveDB();
+            currentCardIndex++;
+            showSrsCard();
+        }
+
+        // ==========================================
+        // SETTINGS & BACKUP / EXPORT / IMPORT
+        // ==========================================
         function renderSettings() {
             setActiveNav(null);
             const root = document.getElementById('app-root');
             root.innerHTML = `
-                <h3 style="margin-top:0; color:var(--accent);">⚙️ ระบบจัดการข้อมูล</h3>
+                <h3 style="margin-top:0; color:var(--accent);">⚙️ ระบบจัดการข้อมูล & สำรองข้อมูล (SRS Sync)</h3>
+                <p style="font-size:0.85rem; color:var(--text-sub);">ไฟล์ JSON สำรองจะบันทึกทั้งข้อมูลยา EKG Procedures และสถิติความจำ SRS ของคุณไว้ทั้งหมด</p>
+                
                 <div class="item-card" style="margin-top:20px;">
-                    <strong style="color:var(--accent);">💾 สำรองข้อมูล (Export)</strong>
-                    <button class="btn" style="margin-top:8px;" onclick="exportData()">ดาวน์โหลดไฟล์ Backup</button>
+                    <strong style="color:var(--accent); font-size:1rem;">💾 สำรองข้อมูล (Export JSON)</strong>
+                    <p style="font-size:0.85rem; color:var(--text-sub);">ดาวน์โหลดฐานข้อมูลและสถิติ SRS ทั้งหมดเก็บไว้เป็นไฟล์</p>
+                    <button class="btn" onclick="exportData()">ดาวน์โหลดไฟล์ Backup</button>
                 </div>
+
                 <div class="item-card" style="margin-top:20px;">
-                    <strong style="color:var(--danger);">🔄 ล้างแคชและโหลดข้อมูลใหม่</strong>
-                    <button class="btn" style="background:var(--danger); color:#000; margin-top:8px;" onclick="localStorage.clear(); location.reload();">ล้างข้อมูลทั้งหมดในเครื่อง</button>
+                    <strong style="color:var(--warning); font-size:1rem;">📂 กู้คืน/นำเข้าข้อมูล (Import JSON)</strong>
+                    <p style="font-size:0.85rem; color:var(--text-sub);">เลือกไฟล์ Backup เพื่อกู้คืนฐานข้อมูลและสถานะ SRS</p>
+                    <input type="file" id="import-file" accept=".json" style="background:transparent; border:1px solid #444; padding:6px; font-size:0.8rem; margin-bottom:8px;">
+                    <button class="btn" style="background:var(--warning); color:#000;" onclick="importData()">นำเข้าข้อมูล</button>
+                </div>
+
+                <div class="item-card" style="margin-top:30px; border-color:var(--danger);">
+                    <strong style="color:var(--danger); font-size:1rem;">🔄 ล้างแคชและรีเซ็ตข้อมูลทั้งหมด</strong>
+                    <p style="font-size:0.85rem; color:var(--text-sub);">ล้างหน่วยความจำและคืนค่าเริ่มต้นทั้งหมดในเครื่อง</p>
+                    <button class="btn" style="background:var(--danger); color:#000;" onclick="localStorage.clear(); location.reload();">ล้างข้อมูลและรีเซ็ต</button>
                 </div>
             `;
         }
@@ -284,29 +449,47 @@
         function exportData() {
             const dataStr = JSON.stringify(db, null, 4);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const link = document.createElement('a');
-            link.setAttribute('href', dataUri);
-            link.setAttribute('download', 'ER_External_Brain_Backup.json');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const exportFileDefaultName = 'ER_External_Brain_SRS_' + new Date().toISOString().slice(0,10) + '.json';
+
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            document.body.appendChild(linkElement);
+            linkElement.click();
+            document.body.removeChild(linkElement);
         }
 
-        function renderReview() {
-            setActiveNav('btn-review');
-            document.getElementById('app-root').innerHTML = `
-                <h3 style="margin-top:0;">🧠 Daily Active Recall</h3>
-                <div class="item-card">
-                    <strong style="color:var(--accent);">Case 1: Septic Shock Prescribing</strong>
-                    <p style="margin:6px 0;">ต้องการให้ Levophed practical concentration และ starting rate เท่าไร?</p>
-                    <button class="btn-sub" onclick="document.getElementById('ans-1').style.display='block'">เฉลยคำตอบ</button>
-                    <div id="ans-1" style="display:none; margin-top:8px;" class="usual-box">
-                        <strong>My Usual Practice:</strong> Levophed 1:250 (4mg/250ml) เริ่ม 30 ml/hr ตาม MAP >= 65
-                    </div>
-                </div>
-            `;
+        function importData() {
+            const fileInput = document.getElementById('import-file');
+            if (!fileInput.files.length) {
+                alert("กรุณาเลือกไฟล์ .json ก่อนครับ");
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const importedDB = JSON.parse(e.target.result);
+                    if (importedDB && Array.isArray(importedDB.drugs) && Array.isArray(importedDB.srsCards)) {
+                        db = importedDB;
+                        saveDB();
+                        alert("✅ นำเข้าข้อมูลและสถิติ SRS สำเร็จ!");
+                        renderReview();
+                    } else {
+                        alert("❌ ไฟล์ไม่ถูกต้อง โครงสร้างข้อมูลไม่ตรงกับระบบ SRS");
+                    }
+                } catch (err) {
+                    alert("❌ เกิดข้อผิดพลาดในการอ่านไฟล์: " + err);
+                }
+            };
+            reader.readAsText(file);
         }
 
+        // ==========================================
+        // OTHER MODULES
+        // ==========================================
         function renderDrugs() {
             setActiveNav('btn-drugs');
             const root = document.getElementById('app-root');
