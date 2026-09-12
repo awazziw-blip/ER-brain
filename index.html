@@ -3,476 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MY ER EXTERNAL BRAIN</title>
-    <!-- PWA Meta Tags -->
+    <title>ER External Brain</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#03dac6">
-    <link rel="apple-touch-icon" href="icon.png">
-    
+    <meta name="theme-color" content="#1e1e1e">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
-        :root {
-            --bg: #121212;
-            --surface: #1e1e1e;
-            --surface-hover: #2a2a2a;
-            --text-main: #f0f0f0;
-            --text-sub: #a0a0a0;
-            --accent: #03dac6;
-            --warning: #ffb74d;
-            --danger: #cf6679;
-            --border: #333333;
-        }
-        * { box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            margin: 0;
-            padding: 16px;
-            max-width: 650px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
-        }
-        .header-left h1 { font-size: 1.2rem; margin: 0; color: var(--accent); }
-        .badge {
-            font-size: 0.75rem;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            background: var(--accent);
-            color: #000;
-        }
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-        .nav-btn {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px;
-            text-align: left;
-            cursor: pointer;
-            color: var(--text-main);
-            transition: 0.2s;
-        }
-        .nav-btn:hover { background: var(--surface-hover); }
-        .nav-btn.active { border-color: var(--accent); background: #242424; }
-        .nav-btn h3 { margin: 0 0 4px 0; font-size: 0.9rem; color: #fff; }
-        .nav-btn span { font-size: 0.75rem; color: var(--text-sub); }
-        .content-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 16px;
-            min-height: 450px;
-        }
-        .btn {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 10px 14px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            width: 100%;
-        }
-        .btn-sub {
-            background: #333;
-            color: #fff;
-            border: 1px solid var(--border);
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            background: #242424;
-            border: 1px solid var(--border);
-            color: #fff;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-        .item-card {
-            background: #252525;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-        .standard-box {
-            border-left: 3px solid var(--accent);
-            padding-left: 10px;
-            margin: 8px 0;
-            background: rgba(3, 218, 198, 0.05);
-            font-size: 0.85rem;
-        }
-        .usual-box {
-            border-left: 3px solid var(--warning);
-            padding-left: 10px;
-            margin: 8px 0;
-            background: rgba(255, 183, 77, 0.05);
-            font-size: 0.85rem;
-        }
-        .tag {
-            display: inline-block;
-            padding: 3px 8px;
-            font-size: 0.7rem;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        .tag-ready { background: #03dac6; color: #000; }
-        .tag-refresh { background: #ffb74d; color: #000; }
+        body { background-color: #121212; color: #e0e0e0; font-family: sans-serif; }
+        .card { background-color: #1e1e1e; border: 1px solid #333; }
+        .accent-text { color: #03dac6; }
+        .accent-bg { background-color: #03dac6; color: #121212; }
+        .tab-active { border-bottom: 2px solid #03dac6; color: #03dac6; }
     </style>
 </head>
-<body>
-
-    <header>
-        <div class="header-left">
-            <h1>MY ER EXTERNAL BRAIN</h1>
-            <span class="badge">PWA READY</span>
+<body class="p-4 max-w-2xl mx-auto pb-12">
+    <header class="flex justify-between items-center mb-4 border-b border-gray-800 pb-4">
+        <div>
+            <h1 class="text-xl font-bold accent-text">ER EXTERNAL BRAIN</h1>
+            <p class="text-xs text-gray-400">Cloud Sync (Google Sheets & Image Support)</p>
         </div>
-        <button class="btn-sub" onclick="renderSettings()" style="width: auto; background: var(--surface);">⚙️ ตั้งค่า</button>
+        <button onclick="loadData()" class="px-3 py-1.5 text-xs font-semibold accent-bg rounded-lg">🔄 รีเฟรช</button>
     </header>
 
-    <div class="nav-grid">
-        <button class="nav-btn" onclick="renderReview()" id="btn-review">
-            <h3>🧠 Daily Review</h3>
-            <span>Adaptive (&lt;=15m)</span>
-        </button>
-        <button class="nav-btn" onclick="renderDrugs()" id="btn-drugs">
-            <h3>💊 Drugs</h3>
-            <span>Standard vs Usual</span>
-        </button>
-        <button class="nav-btn" onclick="renderEKG()" id="btn-ekg">
-            <h3>❤️ EKG Module</h3>
-            <span>5-Step & Error Bank</span>
-        </button>
-        <button class="nav-btn" onclick="renderProcedures()" id="btn-procedures">
-            <h3>🔧 Procedures</h3>
-            <span>Walkthrough Cards</span>
-        </button>
+    <div class="flex space-x-4 mb-4 border-b border-gray-800 pb-2 text-sm font-semibold">
+        <button onclick="switchTab('all')" id="tab-all" class="tab-active pb-1">ทั้งหมด</button>
+        <button onclick="switchTab('drugs')" id="tab-drugs" class="text-gray-400 pb-1">ยา (Drugs)</button>
+        <button onclick="switchTab('ekg')" id="tab-ekg" class="text-gray-400 pb-1">EKG</button>
+        <button onclick="switchTab('procedures')" id="tab-procedures" class="text-gray-400 pb-1">หัตถการ</button>
     </div>
 
-    <div id="app-root" class="content-box"></div>
+    <div class="mb-4">
+        <input type="text" id="searchInput" placeholder="🔍 ค้นหาอาการ, ยา, EKG, หัตถการ..." class="w-full p-3 rounded-xl card text-sm focus:outline-none focus:border-[#03dac6]" oninput="filterData()">
+    </div>
+
+    <div id="loading" class="text-center py-10 text-gray-400">กำลังซิงก์ข้อมูลจาก Google Sheets...</div>
+    <div id="contentContainer" class="space-y-4"></div>
 
     <script>
-        const initialDB = {
-            drugs: [
-                {
-                    id: "d1",
-                    generic: "Norepinephrine",
-                    brand: "Levophed",
-                    indication: "Septic shock / Distributive shock",
-                    std_dose: "2 - 20 mcg/min",
-                    std_route: "IV Infusion (Central line preferred)",
-                    std_prep: "4 mg in D5W/NSS 250 ml (16 mcg/ml)",
-                    source: "AHA Guidelines | Status: VERIFIED",
-                    usual_practice: "Levophed 1:250 (4mg/250ml) เริ่ม 30 ml/hr Titrate ตาม MAP >= 65",
-                    notes: "ระวัง peripheral extravasation รุนแรง หากไม่มี central line ต้องรีบเปิดเส้นใหญ่",
-                    status: "READY"
+        // ลิงก์ Google Sheets CSV ของคุณ
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRy4AcfQZ_Zn05cPozeFLcY7jQkM0Q-C_ZqSjUIOjXGkUwVFz87d7GuADRm8Q_cag/pub?output=csv";
+        
+        let globalData = [];
+        let currentTab = 'all';
+
+        async function loadData() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('contentContainer').innerHTML = '';
+            
+            Papa.parse(SHEET_URL, {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    globalData = results.data;
+                    document.getElementById('loading').style.display = 'none';
+                    renderData(globalData);
+                },
+                error: function(err) {
+                    document.getElementById('loading').innerText = "เกิดข้อผิดพลาดในการโหลดข้อมูลจาก Google Sheets";
+                    console.error(err);
                 }
-            ],
-            ekg: [
-                {
-                    id: "e1",
-                    diagnosis: "Acute Posterior STEMI",
-                    danger: "Delayed reperfusion therapy",
-                    step1_see: "ST depression lead V1-V3 with tall, broad R waves and upright T waves",
-                    step2_localize: "Posterior wall (LCx or RCA)",
-                    step3_differentials: "Anterior NSTEMI, Posterior STEMI, RV strain",
-                    step4_immediate_danger: "Extensive myocardial necrosis without typical ST elevation",
-                    step5_management: "ทำ EKG Leads V7-V9 ทันที (เกณฑ์ >= 0.5 mm) เพื่อเปิด Cath Lab",
-                    status: "REFRESH"
+            });
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            ['all', 'drugs', 'ekg', 'procedures'].forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if(t === tab) {
+                    el.className = "tab-active pb-1 font-bold";
+                } else {
+                    el.className = "text-gray-400 pb-1";
                 }
-            ],
-            procedures: [
-                {
-                    id: "p1",
-                    name: "Emergency Cricothyroidotomy",
-                    indication: "Cannot Intubate, Cannot Oxygenate (CICO)",
-                    contraindication: "Laryngeal trauma / Tracheal transection (relative)",
-                    equipment: "Scalpel No.11, Bougie, ET tube No.6.0, Tracheal hook",
-                    steps: "1. Stabilize larynx -> 2. กรีดแนวตั้งผ่านผิวหนัง -> 3. กรีดแนวนอนผ่าน cricothyroid membrane -> 4. สอด Bougie เข้า trachea -> 5. Railroad ท่อเบอร์ 6 ตาม bougie เข้าไป",
-                    confirmation: "EtCO2, Chest movement, Auscultation",
-                    status: "READY"
-                }
-            ]
-        };
-
-        const dbKey = 'er_brain_db_v1_3';
-
-        if (!localStorage.getItem(dbKey)) {
-            localStorage.setItem(dbKey, JSON.stringify(initialDB));
-        }
-        let db = JSON.parse(localStorage.getItem(dbKey));
-
-        function saveDB() {
-            localStorage.setItem(dbKey, JSON.stringify(db));
+            });
+            filterData();
         }
 
-        function setActiveNav(btnId) {
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            if (btnId) {
-                const btn = document.getElementById(btnId);
-                if (btn) btn.classList.add('active');
-            }
-        }
-
-        // ==========================================
-        // SETTINGS (BACKUP & RESTORE)
-        // ==========================================
-        function renderSettings() {
-            setActiveNav(null);
-            const root = document.getElementById('app-root');
-            root.innerHTML = `
-                <h3 style="margin-top:0; color:var(--accent);">⚙️ ระบบจัดการข้อมูล (Backup & Restore)</h3>
-                <p style="font-size:0.85rem; color:var(--text-sub);">จัดการฐานข้อมูลเพื่อป้องกันข้อมูลสูญหาย หรือโอนย้ายข้อมูลข้ามอุปกรณ์</p>
-                
-                <div class="item-card" style="margin-top:20px;">
-                    <strong style="color:var(--accent); font-size:1rem;">💾 สำรองข้อมูล (Export)</strong>
-                    <p style="font-size:0.85rem; color:var(--text-sub);">ดาวน์โหลดข้อมูลทั้งหมดเก็บไว้เป็นไฟล์ .json</p>
-                    <button class="btn" onclick="exportData()">ดาวน์โหลดไฟล์ Backup</button>
-                </div>
-
-                <div class="item-card" style="margin-top:20px;">
-                    <strong style="color:var(--warning); font-size:1rem;">📂 กู้คืน/นำเข้าข้อมูล (Import)</strong>
-                    <p style="font-size:0.85rem; color:var(--text-sub);">เลือกไฟล์ Backup เพื่อกู้คืน (ข้อมูลในเครื่องจะถูกแทนที่ทั้งหมด)</p>
-                    <input type="file" id="import-file" accept=".json" style="background:transparent; border:1px solid #444; padding:6px; font-size:0.8rem; margin-bottom:8px;">
-                    <button class="btn" style="background:var(--warning); color:#000;" onclick="importData()">นำเข้าข้อมูล</button>
-                </div>
-
-                <div class="item-card" style="margin-top:30px; border-color:var(--danger);">
-                    <strong style="color:var(--danger); font-size:1rem;">🗑 ล้างข้อมูล (Reset to Default)</strong>
-                    <p style="font-size:0.85rem; color:var(--text-sub);">ลบข้อมูลที่คุณเพิ่มเองทั้งหมด และคืนค่ากลับไปเป็นฐานข้อมูลตั้งต้นของระบบ</p>
-                    <button class="btn" style="background:var(--danger); color:#000;" onclick="resetData()">ล้างข้อมูลและคืนค่าเริ่มต้น</button>
-                </div>
-            `;
-        }
-
-        function exportData() {
-            const dataStr = localStorage.getItem(dbKey);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = 'ER_External_Brain_' + new Date().toISOString().slice(0,10) + '.json';
-
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            document.body.appendChild(linkElement);
-            linkElement.click();
-            document.body.removeChild(linkElement);
-        }
-
-        function importData() {
-            const fileInput = document.getElementById('import-file');
-            if (!fileInput.files.length) {
-                alert("กรุณาเลือกไฟล์ .json ก่อนครับ");
+        function renderData(data) {
+            const container = document.getElementById('contentContainer');
+            container.innerHTML = '';
+            
+            if(data.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 py-6">ไม่พบข้อมูล</div>';
                 return;
             }
             
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    const importedDB = JSON.parse(e.target.result);
-                    if (importedDB && Array.isArray(importedDB.drugs) && Array.isArray(importedDB.ekg)) {
-                        db = importedDB;
-                        saveDB();
-                        alert("✅ นำเข้าข้อมูลสำเร็จ!");
-                        renderReview();
-                    } else {
-                        alert("❌ ไฟล์ไม่ถูกต้อง โครงสร้างข้อมูลไม่ตรงกับระบบ");
-                    }
-                } catch (err) {
-                    alert("❌ เกิดข้อผิดพลาดในการอ่านไฟล์: " + err);
-                }
-            };
-            reader.readAsText(file);
-        }
+            data.forEach(item => {
+                // คัดกรองประเภทตาม Tab หรือตรวจสอบฟิลด์
+                const isDrug = item.generic || (item.id && item.id.startsWith('d'));
+                const isEkg = item.diagnosis || (item.id && item.id.startsWith('e'));
+                const isProc = item.name || (item.id && item.id.startsWith('p'));
 
-        function resetData() {
-            if (confirm("⚠️ คำเตือน: ข้อมูลทั้งหมดที่คุณพิมพ์ไว้จะหายไป ต้องการล้างและคืนค่าเริ่มต้นจริงๆ หรือไม่?")) {
-                localStorage.setItem(dbKey, JSON.stringify(initialDB));
-                db = JSON.parse(localStorage.getItem(dbKey));
-                alert("🔄 คืนค่าเริ่มต้นเรียบร้อยแล้ว");
-                renderReview();
-            }
-        }
+                if(currentTab === 'drugs' && !isDrug) return;
+                if(currentTab === 'ekg' && !isEkg) return;
+                if(currentTab === 'procedures' && !isProc) return;
 
-        // ==========================================
-        // MODULE RENDERERS
-        // ==========================================
-        function renderReview() {
-            setActiveNav('btn-review');
-            const root = document.getElementById('app-root');
-            root.innerHTML = `
-                <h3 style="margin-top:0;">🧠 Daily Active Recall</h3>
-                <p style="font-size:0.8rem; color:var(--text-sub); margin-bottom:12px;">จำกัดเซสชัน 10-15 นาที</p>
-                <div class="item-card">
-                    <strong style="color:var(--accent);">Case 1: Septic Shock Prescribing</strong>
-                    <p style="margin:6px 0;">ต้องการให้ Levophed ทาง practical format: concentration ที่ผสม และ starting rate ที่ใช้บ่อยคือเท่าไร?</p>
-                    <button class="btn-sub" onclick="document.getElementById('ans-1').style.display='block'">เฉลยคำตอบ</button>
-                    <div id="ans-1" style="display:none; margin-top:8px;" class="usual-box">
-                        <strong>My Usual Practice:</strong> Levophed 1:250 (4mg/250ml) เริ่ม 30 ml/hr ไตเตรทตาม MAP >= 65
+                if(!item.generic && !item.diagnosis && !item.name) return;
+                
+                const card = document.createElement('div');
+                card.className = 'card p-4 rounded-xl shadow-md space-y-2';
+                
+                let title = item.generic || item.diagnosis || item.name || 'ไม่มีชื่อ';
+                let badge = item.brand || item.danger || item.indication || '';
+                let practice = item.usual_practice || item.step5_management || item.steps || '';
+                let notesOrEquip = item.notes || item.equipment || '';
+                let imageUrl = item.image_url ? item.image_url.trim() : '';
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h2 class="font-bold text-base accent-text">${title}</h2>
+                        <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-300 max-w-[50%] truncate">${badge}</span>
                     </div>
-                </div>
-            `;
-        }
-
-        function renderDrugs() {
-            setActiveNav('btn-drugs');
-            const root = document.getElementById('app-root');
-            root.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <h3 style="margin:0;">💊 Emergency Drugs</h3>
-                    <button class="btn-sub" onclick="showAddDrugForm()">+ เพิ่มยา</button>
-                </div>
-                <input type="text" id="drug-search" placeholder="ค้นหา Generic หรือ Brand..." oninput="filterDrugs(this.value)">
-                <div id="drug-container"></div>
-            `;
-            updateDrugList(db.drugs);
-        }
-
-        function updateDrugList(list) {
-            const container = document.getElementById('drug-container');
-            if (!container) return;
-            let html = '';
-            list.forEach(d => {
-                const realIndex = db.drugs.findIndex(x => x.id === d.id);
-                html += `
-                    <div class="item-card">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <strong style="font-size:1rem; color:#fff;">${d.generic} (${d.brand})</strong>
-                            <button class="btn-sub" style="color:var(--danger); border-color:var(--danger);" onclick="deleteDrug(${realIndex})">ลบ</button>
-                        </div>
-                        <p style="margin:4px 0 8px; font-size:0.85rem; color:var(--text-sub);">Indication: ${d.indication}</p>
-                        <div class="standard-box">
-                            <strong style="color:var(--accent);">📋 Standard Practice</strong><br>Dose: ${d.std_dose} | Route: ${d.std_route}
-                        </div>
-                        <div class="usual-box">
-                            <strong style="color:var(--warning);">⚡ My Usual Practice</strong><br>${d.usual_practice}
-                        </div>
-                    </div>
+                    ${practice ? `<p class="text-sm text-gray-200"><strong>Practical/Management:</strong> ${practice}</p>` : ''}
+                    ${notesOrEquip ? `<p class="text-xs text-gray-400"><strong>Notes/Equipment:</strong> ${notesOrEquip}</p>` : ''}
+                    ${imageUrl ? `<div class="mt-2"><img src="${imageUrl}" class="rounded-lg max-h-56 object-cover w-full border border-gray-700" alt="Clinical Image"/></div>` : ''}
                 `;
+                container.appendChild(card);
             });
-            container.innerHTML = html;
         }
 
-        function filterDrugs(kw) {
-            const res = db.drugs.filter(d => 
-                d.generic.toLowerCase().includes(kw.toLowerCase()) || 
-                d.brand.toLowerCase().includes(kw.toLowerCase())
-            );
-            updateDrugList(res);
-        }
+        function filterData() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = globalData.filter(item => {
+                const matchesKeyword = JSON.stringify(item).toLowerCase().includes(keyword);
+                if(!matchesKeyword) return false;
 
-        function showAddDrugForm() {
-            const root = document.getElementById('app-root');
-            root.innerHTML = `
-                <h3 style="margin-top:0;">+ เพิ่มรายการยา</h3>
-                <input type="text" id="add-generic" placeholder="Generic Name">
-                <input type="text" id="add-brand" placeholder="Brand Name">
-                <input type="text" id="add-indication" placeholder="Indication">
-                <input type="text" id="add-dose" placeholder="Standard Dose">
-                <input type="text" id="add-route" placeholder="Route">
-                <input type="text" id="add-prep" placeholder="Preparation">
-                <input type="text" id="add-source" placeholder="Source + Version">
-                <textarea id="add-usual" placeholder="My Usual Practice"></textarea>
-                <textarea id="add-notes" placeholder="Notes"></textarea>
-                <button class="btn" onclick="saveNewDrug()">บันทึกข้อมูลยา</button>
-                <button class="btn-sub" style="width:100%; margin-top:8px;" onclick="renderDrugs()">ยกเลิก</button>
-            `;
-        }
+                const isDrug = item.generic || (item.id && item.id.startsWith('d'));
+                const isEkg = item.diagnosis || (item.id && item.id.startsWith('e'));
+                const isProc = item.name || (item.id && item.id.startsWith('p'));
 
-        function saveNewDrug() {
-            const generic = document.getElementById('add-generic').value.trim();
-            if (!generic) return alert('กรุณาระบุ Generic Name');
-            
-            db.drugs.push({
-                id: 'd_' + Date.now(),
-                generic: generic,
-                brand: document.getElementById('add-brand').value.trim() || '-',
-                indication: document.getElementById('add-indication').value.trim() || '-',
-                std_dose: document.getElementById('add-dose').value.trim() || '-',
-                std_route: document.getElementById('add-route').value.trim() || '-',
-                std_prep: document.getElementById('add-prep').value.trim() || '-',
-                source: document.getElementById('add-source').value.trim() || 'Manual Input',
-                usual_practice: document.getElementById('add-usual').value.trim() || '-',
-                notes: document.getElementById('add-notes').value.trim() || '-',
-                status: 'READY'
+                if(currentTab === 'drugs' && !isDrug) return false;
+                if(currentTab === 'ekg' && !isEkg) return false;
+                if(currentTab === 'procedures' && !isProc) return false;
+
+                return true;
             });
-            saveDB();
-            renderDrugs();
+            renderData(filtered);
         }
 
-        function deleteDrug(index) {
-            if (confirm('ยืนยันลบรายการยานี้?')) {
-                db.drugs.splice(index, 1);
-                saveDB();
-                renderDrugs();
-            }
-        }
-
-        function renderEKG() {
-            setActiveNav('btn-ekg');
-            const root = document.getElementById('app-root');
-            let html = `<h3 style="margin-top:0;">❤️ EKG Error Bank</h3>`;
-            db.ekg.forEach(e => {
-                html += `
-                    <div class="item-card">
-                        <strong style="color:var(--warning); font-size:1rem;">${e.diagnosis}</strong>
-                        <p style="margin:6px 0; color:var(--danger); font-size:0.85rem;">Immediate Danger: ${e.danger}</p>
-                        <div style="font-size:0.85rem; background:#1c1c1c; padding:10px; border-radius:6px; margin:8px 0;">
-                            <div><strong>Pass 1:</strong> ${e.step1_see}</div>
-                            <div><strong>Pass 5:</strong> ${e.step5_management}</div>
-                        </div>
-                    </div>
-                `;
-            });
-            root.innerHTML = html;
-        }
-
-        function renderProcedures() {
-            setActiveNav('btn-procedures');
-            const root = document.getElementById('app-root');
-            let html = `<h3 style="margin-top:0;">🔧 Procedure Cards</h3>`;
-            db.procedures.forEach(p => {
-                html += `
-                    <div class="item-card">
-                        <strong style="color:var(--accent); font-size:1rem;">${p.name}</strong>
-                        <div class="usual-box"><strong>Steps:</strong><br>${p.steps}</div>
-                    </div>
-                `;
-            });
-            root.innerHTML = html;
-        }
-
-        renderReview();
-    </script>
-    
-    <!-- PWA Service Worker Registration -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('sw.js')
-            .then(reg => console.log('Service Worker Registered!', reg))
-            .catch(err => console.log('Service Worker Registration Failed!', err));
-        });
-      }
+        window.onload = loadData;
     </script>
 </body>
 </html>
