@@ -139,7 +139,7 @@
     <header>
         <div class="header-left">
             <h1>MY ER EXTERNAL BRAIN</h1>
-            <span class="badge">v3.2 CPR Module</span>
+            <span class="badge">v3.3 Full</span>
         </div>
         <button class="btn-sub" onclick="renderSettings()" style="width: auto; background: var(--surface);">⚙️ ตั้งค่า</button>
     </header>
@@ -297,15 +297,18 @@
             ]
         };
 
-        const dbKey = 'er_brain_db_v3_2_cpr';
+        const dbKey = 'er_brain_db_v3_3_full';
         if (!localStorage.getItem(dbKey)) {
             localStorage.setItem(dbKey, JSON.stringify(initialDB));
         }
         let db = JSON.parse(localStorage.getItem(dbKey));
-        if (!db.cpr) {
-            db.cpr = initialDB.cpr;
-            saveDB();
-        }
+        // ตรวจสอบและเติม module ที่อาจขาดหายไปจาก DB เก่าในเครื่อง
+        if (!db.drugs) db.drugs = initialDB.drugs;
+        if (!db.ekg) db.ekg = initialDB.ekg;
+        if (!db.procedures) db.procedures = initialDB.procedures;
+        if (!db.cpr) db.cpr = initialDB.cpr;
+        if (!db.srsCards) db.srsCards = initialDB.srsCards;
+        saveDB();
 
         function saveDB() {
             localStorage.setItem(dbKey, JSON.stringify(db));
@@ -460,6 +463,47 @@
         }
 
         // ==========================================
+        // EKG MODULE
+        // ==========================================
+        function renderEKG() {
+            setActiveNav('btn-ekg');
+            const root = document.getElementById('app-root');
+            let html = `<h3 style="margin-top:0;">❤️ EKG Error Bank</h3>`;
+            db.ekg.forEach(e => {
+                html += `
+                    <div class="item-card">
+                        <strong style="color:var(--warning); font-size:1rem;">${e.diagnosis}</strong>
+                        <p style="margin:6px 0; color:var(--danger); font-size:0.85rem;">Danger: ${e.danger}</p>
+                        <div style="font-size:0.85rem; background:#1c1c1c; padding:10px; border-radius:6px;">
+                            <div><strong>See:</strong> ${e.step1_see}</div>
+                            <div style="margin-top:4px;"><strong>Action:</strong> ${e.step5_management}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            root.innerHTML = html;
+        }
+
+        // ==========================================
+        // PROCEDURES MODULE
+        // ==========================================
+        function renderProcedures() {
+            setActiveNav('btn-procedures');
+            const root = document.getElementById('app-root');
+            let html = `<h3 style="margin-top:0;">🔧 Procedure Cards</h3>`;
+            db.procedures.forEach(p => {
+                html += `
+                    <div class="item-card">
+                        <strong style="color:var(--accent); font-size:1rem;">${p.name}</strong>
+                        <p style="margin:6px 0; font-size:0.85rem;"><strong>Indication:</strong> ${p.indication}</p>
+                        <div class="usual-box"><strong>Steps:</strong><br>${p.steps}</div>
+                    </div>
+                `;
+            });
+            root.innerHTML = html;
+        }
+
+        // ==========================================
         // CPR & ACLS PROTOCOLS MODULE
         // ==========================================
         function renderCPR() {
@@ -546,41 +590,6 @@
                 }
             };
             reader.readAsText(file);
-        }
-
-        function renderEKG() {
-            setActiveNav('btn-ekg');
-            const root = document.getElementById('app-root');
-            let html = `<h3 style="margin-top:0;">❤️ EKG Error Bank</h3>`;
-            db.ekg.forEach(e => {
-                html += `
-                    <div class="item-card">
-                        <strong style="color:var(--warning); font-size:1rem;">${e.diagnosis}</strong>
-                        <p style="margin:6px 0; color:var(--danger); font-size:0.85rem;">Danger: ${e.danger}</p>
-                        <div style="font-size:0.85rem; background:#1c1c1c; padding:10px; border-radius:6px;">
-                            <div><strong>See:</strong> ${e.step1_see}</div>
-                            <div style="margin-top:4px;"><strong>Action:</strong> ${e.step5_management}</div>
-                        </div>
-                    </div>
-                `;
-            });
-            root.innerHTML = html;
-        }
-
-        function renderProcedures() {
-            setActiveNav('btn-procedures');
-            const root = document.getElementById('app-root');
-            let html = `<h3 style="margin-top:0;">🔧 Procedure Cards</h3>`;
-            db.procedures.forEach(p => {
-                html += `
-                    <div class="item-card">
-                        <strong style="color:var(--accent); font-size:1rem;">${p.name}</strong>
-                        <p style="margin:6px 0; font-size:0.85rem;"><strong>Indication:</strong> ${p.indication}</p>
-                        <div class="usual-box"><strong>Steps:</strong><br>${p.steps}</div>
-                    </div>
-                `;
-            });
-            root.innerHTML = html;
         }
 
         renderReview();
